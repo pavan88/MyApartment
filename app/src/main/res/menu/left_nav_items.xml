@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+      xmlns:tools="http://schemas.android.com/tools"
+      tools:context=".HomeActivity">
+
+    <group android:checkableBehavior="single">
+        <item
+                android:id="@+id/home"
+                android:title="Home"/>
+        <item
+                android:id="@+id/pm"
+                android:title="Pay"/>
+        <item
+                android:id="@+id/newex"
+                android:title="Add New Expenses"/>
+
+        <item
+                android:id="@+id/corpus"
+                android:title="Corpus"/>
+
+        <item
+                android:id="@+id/c_reminder"
+                android:title="Corpus Reminder"/>
+
+        <item
+                android:id="@+id/m_reminder"
+                android:title="Maintainence Reminder"/>
+    </group>
+
+    <item android:title="Communicate">
+        <menu>
+            <item
+                    android:id="@+id/feedback"
+                    android:title="Send Feedback"/>
+
+            <item
+                    android:id="@+id/help"
+                    android:title="Help"/>
+
+            <item
+                    android:id="@+id/s_attendance"
+                    android:title="Security Attendance"/>
+
+            <item
+                    android:id="@+id/m_attendance"
+                    android:title="Maid Attendance"/>
+
+            <item
+                    android:id="@+id/logout"
+                    android:title="Logout"/>
+
+        </menu>
+    </item>
+
+</menu>

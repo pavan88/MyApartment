@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".HomeActivity">
+
+
+    <Button
+            android:text="Expenses"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/exp"
+            android:layout_alignParentEnd="true" android:layout_marginEnd="76dp" android:layout_alignTop="@+id/inc"/>
+    <Button
+            android:text="Income"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/inc" android:layout_alignParentStart="true" android:layout_marginStart="40dp"
+            android:layout_alignParentTop="true" android:layout_marginTop="86dp"/>
+
+    <LinearLayout android:layout_width="match_parent" android:id="@+id/linearlayout"
+                  android:layout_height="wrap_content" android:orientation="vertical"
+                  android:layout_centerHorizontal="true" android:layout_alignParentTop="true"
+                  android:layout_marginTop="250dp">
+        <TableLayout android:id="@+id/tablelayout"
+                     android:layout_width="match_parent"
+                     android:layout_height="wrap_content">
+        </TableLayout>
+    </LinearLayout>
+
+</RelativeLayout>
