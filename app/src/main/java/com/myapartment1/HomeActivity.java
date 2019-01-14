@@ -107,7 +107,6 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         actv.setVisibility(View.INVISIBLE);
 
 
-
         // Initialize credentials and service object.
         mCredential = GoogleAccountCredential.usingOAuth2(
                 getApplicationContext(), Arrays.asList(SCOPES))
@@ -474,7 +473,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
                 TableLayout tableLayout = findViewById(R.id.tablelayout);
                 TableRow tableRowHeader = new TableRow(HomeActivity.this);
 
-                TableRow.LayoutParams layoutParams = new TableRow.LayoutParams(TableRow.LayoutParams.WRAP_CONTENT, TableRow.LayoutParams.WRAP_CONTENT, 1f);
+                TableRow.LayoutParams layoutParams = new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.MATCH_PARENT, 1f);
 
                 tableRowHeader.setLayoutParams(layoutParams);
                 tableRowHeader.setPadding(8, 8, 8, 8);
@@ -487,8 +486,8 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 
 
                 tableRowHeader.addView(dateHeader);
-                tableRowHeader.addView(amountHeader);
                 tableRowHeader.addView(flatHeader);
+                tableRowHeader.addView(amountHeader);
                 tableRowHeader.addView(areaHeader);
                 tableLayout.addView(tableRowHeader);
 
@@ -514,7 +513,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
                 }
                 TableRow tableRow = new TableRow(HomeActivity.this);
                 tableRow.setLayoutParams(layoutParams);
-                tableRow.setPadding(8, 80, 8, 40);
+                tableRow.setPadding(8, 8, 8, 4);
 
                 tableLayout.addView(tableRow);
             }
