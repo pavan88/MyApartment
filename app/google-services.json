@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "310871778970",
+    "firebase_url": "https://newapartment-8363a.firebaseio.com",
+    "project_id": "newapartment-8363a",
+    "storage_bucket": "newapartment-8363a.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:310871778970:android:f7a5330c7ab88a24",
+        "android_client_info": {
+          "package_name": "com.myapartment1"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "310871778970-dp12tu3pp70oam01qqlblod1anlhvsgu.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.myapartment1",
+            "certificate_hash": "10c9e72df08188f3f771eeb437f487036c83ea46"
+          }
+        },
+        {
+          "client_id": "310871778970-4kplcqhmi7cmh6vb6ra1ejscghue0grj.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBCjSgB4FNiQmx_B7hFdpBGUP8DCDS1XE4"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "310871778970-4kplcqhmi7cmh6vb6ra1ejscghue0grj.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
