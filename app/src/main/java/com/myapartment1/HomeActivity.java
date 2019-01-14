@@ -56,6 +56,9 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
     private Toolbar toolbar;
     private static final String[] SCOPES = {SheetsScopes.SPREADSHEETS_READONLY};
 
+    private Button expensesButton;
+    private Button incomeButton;
+
 
     static final int REQUEST_ACCOUNT_PICKER = 1000;
     static final int REQUEST_AUTHORIZATION = 1001;
@@ -66,8 +69,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
     String type = "income";
     String range = "Income!B3:E";
     String month;
-
-
+    int monthInt;
     AutoCompleteTextView actv;
     ArrayAdapter<String> adapter;
 
@@ -83,10 +85,14 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 
 
         setContentView(R.layout.activity_home);
+        toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
         String[] monthName = {"January", "February", "March", "April", "May", "June", "July",
                 "August", "September", "October", "November",
                 "December"};
 
+        Calendar calendar = Calendar.getInstance();
         //by Default selected month is current month
         // month = monthName[calendar.get(Calendar.MONTH)];
 
@@ -99,8 +105,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         actv.setTextColor(Color.BLUE);
 
         actv.setVisibility(View.INVISIBLE);
-        toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+
 
 
         // Initialize credentials and service object.
@@ -128,7 +133,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         mProgress.setMessage("Fetching Expenses Details...");
 
         if (id == R.id.exp) {
-           
+            getResults(spreadsheetId, "Expense!B2:F", type);
 
         }
 
@@ -144,8 +149,6 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
                     month = adapter.getItem(pos).toString();
                     Log.i("month", month);
                     getResults(spreadsheetId, range, type);
-
-
                 }
             });
 
@@ -469,21 +472,37 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 
                 // setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
                 TableLayout tableLayout = findViewById(R.id.tablelayout);
-
+                TableRow tableRowHeader = new TableRow(HomeActivity.this);
 
                 TableRow.LayoutParams layoutParams = new TableRow.LayoutParams(TableRow.LayoutParams.WRAP_CONTENT, TableRow.LayoutParams.WRAP_CONTENT, 1f);
+
+                tableRowHeader.setLayoutParams(layoutParams);
+                tableRowHeader.setPadding(8, 8, 8, 8);
+
+
+                TextView dateHeader = createHeaderView("Date");
+                TextView flatHeader = createHeaderView("Flat");
+                TextView amountHeader = createHeaderView("Amount");
+                TextView areaHeader = createHeaderView("Area");
+
+
+                tableRowHeader.addView(dateHeader);
+                tableRowHeader.addView(amountHeader);
+                tableRowHeader.addView(flatHeader);
+                tableRowHeader.addView(areaHeader);
+                tableLayout.addView(tableRowHeader);
 
 
                 for (Object list : output) {
                     if (list instanceof DataIncome) {
                         TableRow tableRow = new TableRow(HomeActivity.this);
                         tableRow.setLayoutParams(layoutParams);
-                        tableRow.setPadding(8, 0, 8, 40);
+                        tableRow.setPadding(8, 8, 8, 8);
 
                         TextView dateValue = createValueView(((DataIncome) list).getDate());
-                        TextView flatValue = createValueView(((DataIncome) list).getFlat());
                         TextView amountValue = createValueView(((DataIncome) list).getAmount());
-                        TextView areaValue = createValueView(((DataIncome) list).getArea());
+                        TextView flatValue = createValueView(((DataIncome) list).getFlat());
+                        TextView areaValue = createValueView(((DataIncome) list).getFlat());
 
 
                         tableRow.addView(dateValue);
@@ -495,7 +514,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
                 }
                 TableRow tableRow = new TableRow(HomeActivity.this);
                 tableRow.setLayoutParams(layoutParams);
-                tableRow.setPadding(8, 0, 8, 40);
+                tableRow.setPadding(8, 80, 8, 40);
 
                 tableLayout.addView(tableRow);
             }
