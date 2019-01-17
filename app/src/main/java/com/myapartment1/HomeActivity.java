@@ -43,7 +43,6 @@ import pub.devrel.easypermissions.AfterPermissionGranted;
 import pub.devrel.easypermissions.EasyPermissions;
 
 import java.io.IOException;
-import java.text.SimpleDateFormat;
 import java.util.*;
 
 public class HomeActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
@@ -66,10 +65,11 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
     static final int REQUEST_PERMISSION_GET_ACCOUNTS = 1003;
 
     String spreadsheetId = "1YgC4Do_-PEQbbuFEQ6o7WrIba1Gh-PSjWMXz8tSgYeo";
-    String type = "income";
-    String range = "Income!B3:E";
+    String type;
+    String range;
     String month;
-    int monthInt;
+
+
     AutoCompleteTextView actv;
     ArrayAdapter<String> adapter;
 
@@ -92,10 +92,6 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
                 "August", "September", "October", "November",
                 "December"};
 
-        Calendar calendar = Calendar.getInstance();
-        //by Default selected month is current month
-        // month = monthName[calendar.get(Calendar.MONTH)];
-
 
         adapter = new ArrayAdapter<String>(this, android.R.layout.select_dialog_item, monthName);
         actv = findViewById(R.id.autoCompleteTextView);
@@ -112,6 +108,9 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
                 getApplicationContext(), Arrays.asList(SCOPES))
                 .setBackOff(new ExponentialBackOff());
 
+        NavigationView navigationView = findViewById(R.id.nav_view);
+        navigationView.setNavigationItemSelectedListener(this);
+
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 HomeActivity.this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -119,8 +118,6 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 
         toggle.syncState();
 
-        NavigationView navigationView = findViewById(R.id.nav_view);
-        navigationView.setNavigationItemSelectedListener(this);
 
     }
 
@@ -132,11 +129,10 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         mProgress.setMessage("Fetching Expenses Details...");
 
         if (id == R.id.exp) {
-            getResults(spreadsheetId, "Expense!B2:F", type);
+            // getResults(spreadsheetId, "Expense!B2:F", type);
 
-        }
-
-        if (id == R.id.inc) {
+            type = "expenses";
+            range = "Expense!B2:E";
             actv.setVisibility(View.VISIBLE);
 
             actv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -151,7 +147,24 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
                 }
             });
 
+        }
 
+        if (id == R.id.inc) {
+            type = "income";
+            range = "Income!B3:E";
+            actv.setVisibility(View.VISIBLE);
+
+            actv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+                @Override
+                public void onItemClick(AdapterView<?> parent, View arg1, int pos,
+                                        long id) {
+                    Toast.makeText(HomeActivity.this, adapter.getItem(pos).toString(), Toast.LENGTH_LONG).show();
+                    month = adapter.getItem(pos).toString();
+                    Log.i("month", month);
+                    getResults(spreadsheetId, range, type);
+                }
+            });
             //
 
         }
@@ -161,6 +174,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
             Toast.makeText(this, "Profile Clicked", Toast.LENGTH_LONG).show();
             Intent profileIntent = new Intent(this, MerchantActivity.class);
             startActivity(profileIntent);
+
 
         }
 
@@ -360,7 +374,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
             JsonFactory jsonFactory = JacksonFactory.getDefaultInstance();
             mService = new com.google.api.services.sheets.v4.Sheets.Builder(
                     transport, jsonFactory, credential)
-                    .setApplicationName("Google Sheets API Android Quickstart")
+                    .setApplicationName("Google Sheets API Android")
                     .build();
         }
 
@@ -394,12 +408,15 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
          */
         private List getDataFromApi(String spreadsheetid, String range, String type) throws Exception {
 
-            List<String> results = new ArrayList<String>();
+
             ValueRange response = this.mService.spreadsheets().values()
                     .get(spreadsheetid, range)
                     .execute();
 
             List<List<Object>> values = response.getValues();
+
+            System.out.println("Class Instance for List" + values.get(0).getClass());
+            System.out.println("Class instance for list of Object types" + values.get(0).get(0).getClass());
 
             List<DataExpenses> dataExpensesList = new ArrayList<>();
             List<DataIncome> incomeList = new ArrayList<>();
@@ -411,16 +428,20 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
                 if (type.equalsIgnoreCase("expenses")) {
                     for (List row : values) {
                         DataExpenses dataExpenses = new DataExpenses();
-                        try {
-                            dataExpenses.setDate((String) row.get(0));
-                            dataExpenses.setParticulars((String) row.get(1));
-                            dataExpenses.setAmount((String) row.get(2));
-                            dataExpenses.setRemarks((String) row.get(4));
-                            dataExpensesList.add(dataExpenses);
-                        } catch (IndexOutOfBoundsException e) {
-                            dataExpensesList.add(dataExpenses);
-                        } finally {
-                            return dataExpensesList;
+                        Log.i("Month", month);
+                        String dateFromExcel = row.get(0).toString();
+                        if (month.equalsIgnoreCase(Utility.getMonthName(dateFromExcel))) {
+                            try {
+                                dataExpenses.setDate((String) row.get(0));
+                                dataExpenses.setParticulars((String) row.get(1));
+                                dataExpenses.setAmount((String) row.get(2));
+                                dataExpenses.setRemarks((String) row.get(3));
+                                dataExpensesList.add(dataExpenses);
+                            } catch (IndexOutOfBoundsException e) {
+                                dataExpensesList.add(dataExpenses);
+                            } finally {
+                                return dataExpensesList;
+                            }
                         }
                     }
                 }
@@ -469,7 +490,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 
             } else {
 
-                // setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+
                 TableLayout tableLayout = findViewById(R.id.tablelayout);
                 TableRow tableRowHeader = new TableRow(HomeActivity.this);
 
@@ -479,17 +500,32 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
                 tableRowHeader.setPadding(8, 8, 8, 8);
 
 
-                TextView dateHeader = createHeaderView("Date");
-                TextView flatHeader = createHeaderView("Flat");
-                TextView amountHeader = createHeaderView("Amount");
-                TextView areaHeader = createHeaderView("Area");
+                System.out.println(output.getClass().toString());
+
+                if (type.equalsIgnoreCase("income")) {
+                    TextView dateHeader = createHeaderView("Date");
+                    TextView flatHeader = createHeaderView("Flat");
+                    TextView amountHeader = createHeaderView("Amount");
+                    TextView areaHeader = createHeaderView("Area");
+                    tableRowHeader.addView(dateHeader);
+                    tableRowHeader.addView(flatHeader);
+                    tableRowHeader.addView(amountHeader);
+                    tableRowHeader.addView(areaHeader);
+                    tableLayout.addView(tableRowHeader);
+                }
 
 
-                tableRowHeader.addView(dateHeader);
-                tableRowHeader.addView(flatHeader);
-                tableRowHeader.addView(amountHeader);
-                tableRowHeader.addView(areaHeader);
-                tableLayout.addView(tableRowHeader);
+                if (type.equalsIgnoreCase("expenses")) {
+                    TextView dateHeader = createHeaderView("Date");
+                    TextView flatHeader = createHeaderView("Particulars");
+                    TextView amountHeader = createHeaderView("Amount");
+                    TextView areaHeader = createHeaderView("Remarks");
+                    tableRowHeader.addView(dateHeader);
+                    tableRowHeader.addView(flatHeader);
+                    tableRowHeader.addView(amountHeader);
+                    tableRowHeader.addView(areaHeader);
+                    tableLayout.addView(tableRowHeader);
+                }
 
 
                 for (Object list : output) {
@@ -501,7 +537,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
                         TextView dateValue = createValueView(((DataIncome) list).getDate());
                         TextView amountValue = createValueView(((DataIncome) list).getAmount());
                         TextView flatValue = createValueView(((DataIncome) list).getFlat());
-                        TextView areaValue = createValueView(((DataIncome) list).getFlat());
+                        TextView areaValue = createValueView(((DataIncome) list).getArea());
 
 
                         tableRow.addView(dateValue);
@@ -510,10 +546,28 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
                         tableRow.addView(areaValue);
                         tableLayout.addView(tableRow);
                     }
+                    if (list instanceof DataExpenses) {
+                        TableRow tableRow = new TableRow(HomeActivity.this);
+                        tableRow.setLayoutParams(layoutParams);
+                        tableRow.setPadding(8, 8, 8, 8);
+
+                        TextView dateValue = createValueView(((DataExpenses) list).getDate());
+                        TextView amountValue = createValueView(((DataExpenses) list).getAmount());
+                        TextView flatValue = createValueView(((DataExpenses) list).getParticulars());
+                        TextView areaValue = createValueView(((DataExpenses) list).getRemarks());
+
+
+                        tableRow.addView(dateValue);
+                        tableRow.addView(flatValue);
+                        tableRow.addView(amountValue);
+                        tableRow.addView(areaValue);
+                        tableLayout.addView(tableRow);
+                    }
+
                 }
                 TableRow tableRow = new TableRow(HomeActivity.this);
                 tableRow.setLayoutParams(layoutParams);
-                tableRow.setPadding(8, 8, 8, 4);
+                tableRow.setPadding(8, 8, 8, 8);
 
                 tableLayout.addView(tableRow);
             }
@@ -558,7 +612,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
                     Toast.makeText(getApplicationContext(), mLastError.getMessage(), Toast.LENGTH_LONG);
                 }
             } else {
-                // mOutputText.setText("Request cancelled.");
+                Toast.makeText(HomeActivity.this, "Request Cancelled", Toast.LENGTH_LONG);
             }
         }
     }
